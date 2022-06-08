@@ -37,7 +37,10 @@ class DateViewSet(viewsets.ModelViewSet):
         """Create a new date."""
         serializer.save(user=self.request.user)
 
-class TodoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class TodoViewSet(mixins.DestroyModelMixin,
+                 mixins.UpdateModelMixin,
+                 mixins.ListModelMixin,
+                 viewsets.GenericViewSet):
     """Manage todos in the database."""
     serializer_class = serializers.TodoSerializer
     queryset = Todo.objects.all()

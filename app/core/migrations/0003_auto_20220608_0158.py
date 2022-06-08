@@ -12,11 +12,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RenameField(
-            model_name='date',
-            old_name='date',
-            new_name='day',
-        ),
         migrations.CreateModel(
             name='Todo',
             fields=[
