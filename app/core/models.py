@@ -1,6 +1,7 @@
 """
 Database models.
 """
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -41,3 +42,29 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
+
+class Date(models.Model):
+    """Date object."""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    day = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    todos = models.ManyToManyField('Todo')
+
+    def __str__(self):
+        return self.date
+
+class Todo(models.Model):
+    """Tag for filtering recipes."""
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    completion = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return self.name
