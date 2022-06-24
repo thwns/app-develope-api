@@ -34,22 +34,22 @@ class DateSerializer(serializers.ModelSerializer):
                 user=auth_user,
                 **todo,
             )
-            date.tags.add(todo_obj)
+            date.todos.add(todo_obj)
 
     def create(self, validated_data):
         """Create a recipe."""
-        tags = validated_data.pop('tags', [])
-        recipe = Recipe.objects.create(**validated_data)
-        self._get_or_create_tags(tags, recipe)
+        todos = validated_data.pop('todos', [])
+        date = Date.objects.create(**validated_data)
+        self._get_or_create_todos(todos, date)
 
         return date
 
     def update(self, instance, validated_data):
         """Update recipe."""
-        tags = validated_data.pop('tags', None)
+        todos = validated_data.pop('todos', None)
         if tags is not None:
-            instance.tags.clear()
-            self._get_or_create_tags(tags, instance)
+            instance.todos.clear()
+            self._get_or_create_todos(todos, instance)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -63,3 +63,12 @@ class DateDetailSerializer(DateSerializer):
 
     class Meta(DateSerializer.Meta):
         fields = DateSerializer.Meta.fields + ['description']
+
+class DateImageSerializer(serializers.ModelSerializer):
+    """Serializer for uploading images to dates."""
+
+    class Meta:
+        model = Date
+        fields = ['id', 'image']
+        read_only_fields = ['id']
+        extra_kwargs = {'image': {'required': 'True'}}

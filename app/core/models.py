@@ -1,6 +1,9 @@
 """
 Database models.
 """
+import uuid
+import os
+
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import (
@@ -9,6 +12,13 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 
+
+def date_image_file_path(instance, filename):
+    """Generate file path for new date image."""
+    ext = os.path.splitext(filename)[1]
+    filename = f'{uuid.uuid4()}{ext}'
+
+    return os.path.join('uploads', 'date', filename)
 
 class UserManager(BaseUserManager):
     """Manager for users."""
@@ -52,12 +62,13 @@ class Date(models.Model):
     day = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     todos = models.ManyToManyField('Todo')
+    image = models.ImageField(null=True, upload_to=date_image_file_path)
 
     def __str__(self):
-        return self.date
+        return self.description
 
 class Todo(models.Model):
-    """Tag for filtering recipes."""
+    """Tag for filtering todos."""
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     completion = models.CharField(max_length=255)
@@ -67,4 +78,4 @@ class Todo(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return self.title
